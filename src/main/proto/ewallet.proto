@@ -1,0 +1,77 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "uk.ac.westminster.ds.ewallet.grpc";
+option java_outer_classname = "EWalletProto";
+
+service WalletService {
+  rpc createAccount (CreateAccountRequest) returns (CreateAccountResponse);
+  rpc getBalance (BalanceRequest) returns (BalanceResponse);
+  rpc deposit (AmountRequest) returns (AmountResponse);
+  rpc withdraw (AmountRequest) returns (AmountResponse);
+
+  // Milestone 5
+  rpc transfer (TransferRequest) returns (TransferResponse);
+
+  // Milestone 6 (2PC)
+  rpc prepareTransfer (TransferRequest) returns (PrepareResponse);
+  rpc commitTransfer (TransferRequest) returns (Ack);
+  rpc abortTransfer (TransferRequest) returns (Ack);
+}
+
+service ReplicationService {
+  rpc replicateCreateAccount (CreateAccountRequest) returns (Ack);
+  rpc replicateDeposit (AmountRequest) returns (Ack);
+  rpc replicateWithdraw (AmountRequest) returns (Ack);
+  rpc replicateTransfer (TransferRequest) returns (Ack);
+}
+
+message CreateAccountRequest {
+  string accountId = 1;
+}
+
+message CreateAccountResponse {
+  bool created = 1;
+  string message = 2;
+}
+
+message BalanceRequest {
+  string accountId = 1;
+}
+
+message BalanceResponse {
+  bool found = 1;
+  double balance = 2;
+  string message = 3;
+}
+
+message AmountRequest {
+  string accountId = 1;
+  double amount = 2;
+}
+
+message AmountResponse {
+  bool ok = 1;
+  double balance = 2;
+  string message = 3;
+}
+
+message TransferRequest {
+  string fromAccount = 1;
+  string toAccount = 2;
+  double amount = 3;
+}
+
+message TransferResponse {
+  bool ok = 1;
+  string message = 2;
+}
+
+message PrepareResponse {
+  bool ok = 1;
+  string message = 2;
+}
+
+message Ack {
+  bool ok = 1;
+}
